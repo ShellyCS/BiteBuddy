@@ -14,9 +14,8 @@ import logo from "../../assets/logo.webp";
 const Header = () => {
   return (
     <div className="flex justify-between bg-yellow-50 sticky top-0 z-50 shadow-md px-4 py-2">
-      {/* Logo Section */}
       <div className="logo-container flex items-center">
-        <Link to="/">
+        <Link to="/Body">
           <img
             className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20"
             src={logo}
@@ -31,7 +30,7 @@ const Header = () => {
         <ul className="flex items-center space-x-6 text-gray-700">
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
             <HomeIcon className="h-5 w-5" />
-            <Link to="/">Home</Link>
+            <Link to="/Body">Home</Link>
           </li>
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
             <UserCircleIcon className="h-5 w-5" />
@@ -55,7 +54,7 @@ const Header = () => {
           </li>
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
             <ArrowRightOnRectangleIcon className="h-5 w-5" />
-            <Link to="/login">Login</Link>
+            <Link to="/">Logout</Link>
           </li>
         </ul>
       </div>

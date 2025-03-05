@@ -704,7 +704,7 @@ const Body = () => {
           <div key={index} className="flex flex-col items-center">
             <img
               src={data.image}
-              className=" w-45 h-45 rounded-full object-cover transition-transform duration-300 hover:scale-110"
+              className=" w-45 h-45 rounded-full object-cover transition-transform cursor-pointer duration-300 hover:scale-110"
             />
             <span className="mt-2 text-center text-lg font-semibold">
               {data.title}
@@ -713,9 +713,13 @@ const Body = () => {
         ))}
       </div>
       <div className="mt-4 flex justify-start">
-        {filteredRestaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant.data.id} resData={restaurant} />
-        ))}
+        {filteredRestaurants.length > 0 ? (
+          filteredRestaurants.map((restaurant) => (
+            <RestaurantCard key={restaurant.data.id} resData={restaurant} />
+          ))
+        ) : (
+          <p>No Restaurants Found.</p>
+        )}
       </div>
     </div>
   );

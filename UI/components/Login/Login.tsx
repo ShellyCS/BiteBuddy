@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,10 +10,44 @@ export default function Login() {
     fullName: "",
     type: "diner",
   });
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  // Handle input changes
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null); // Clear previous errors
+
+    try {
+      if (isLogin) {
+        // Sign in API call
+        const response = await axios.post(
+          "http://localhost:5000/api/auth/login",
+          {
+            email: formData.email,
+            password: formData.password,
+          }
+        );
+        localStorage.setItem("token", response.data.token); // Save token
+        alert("Login successful!");
+        navigate("/Body");
+      } else {
+        // Sign up API call
+        await axios.post("http://localhost:5000/api/auth/signup", formData);
+        alert("Signup successful! Please login.");
+        setIsLogin(true); // Switch to login view
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -24,7 +60,7 @@ export default function Login() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -96,6 +132,10 @@ export default function Login() {
             </div>
           </form>
 
+          {error && (
+            <div className="mt-4 text-red-500 text-center">{error}</div>
+          )}
+
           <div className="mt-6">
             <button
               onClick={() => setIsLogin(!isLogin)}
@@ -111,3 +151,7 @@ export default function Login() {
     </div>
   );
 }
+
+// pace mail: test@1234
+// sameer: test@111
+// om: omtest@123

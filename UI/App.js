@@ -13,10 +13,10 @@ const AppLayout = () => {
       <div className="app">
         <Header />
         <Routes>
-          <Route path="/" element={<Body />} />
+          <Route path="/" element={<Login />} />
           <Route path="/Body" element={<Body />} />
           <Route path="/reserve" element={<ReserveTable />} />
-          <Route path="/login" element={<Login />} />
+          {/* <Route path="/login" element={<Login />} /> */}
         </Routes>
       </div>
       <Footer />
