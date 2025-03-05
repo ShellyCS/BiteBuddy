@@ -25,7 +25,6 @@ const Header = () => {
         <p className="text-xl font-bold ml-2 text-gray-700">Bite Buddy 🍔</p>
       </div>
 
-      {/* Navigation Links */}
       <div className="flex items-center">
         <ul className="flex items-center space-x-6 text-gray-700">
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">

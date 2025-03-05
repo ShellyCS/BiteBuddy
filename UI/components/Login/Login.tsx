@@ -13,7 +13,6 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -21,14 +20,12 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
       if (isLogin) {
-        // Sign in API call
         const response = await axios.post(
           "http://localhost:5000/api/auth/login",
           {
@@ -36,14 +33,14 @@ export default function Login() {
             password: formData.password,
           }
         );
-        localStorage.setItem("token", response.data.token); // Save token
-        alert("Login successful!");
+        localStorage.setItem("token", response.data.token);
+        // alert("Login successful!");
         navigate("/Body");
       } else {
         // Sign up API call
         await axios.post("http://localhost:5000/api/auth/signup", formData);
-        alert("Signup successful! Please login.");
-        setIsLogin(true); // Switch to login view
+        // alert("Signup successful! Please login.");
+        setIsLogin(true);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Something went wrong");
