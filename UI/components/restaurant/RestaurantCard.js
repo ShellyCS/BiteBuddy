@@ -1,20 +1,29 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantCard = (props) => {
   const { resData } = props;
   const {
+    id,
     cloudinaryImageId,
     name,
     avgRating,
     cuisines,
     costForTwo,
     deliveryTime,
-  } = resData?.data;
+  } = resData;
+
+  const navigate = useNavigate();
+
+  const handleRestaurantDetails = (restId) => {
+    navigate(`/restaurant/${restId}`);
+  };
 
   return (
     <div
       className=" m-1.5 p-1.5 w-2xs hover:shadow-2xl cursor-pointer"
       style={{ backgroundColor: "#f0f0f0" }}
+      onClick={() => handleRestaurantDetails(id)}
     >
       <img
         className="w-full h-40 object-cover rounded-md hover:scale-105 transition-transform duration-300"
@@ -24,13 +33,11 @@ const RestaurantCard = (props) => {
           cloudinaryImageId
         }
       />
+
       <div className="mt-3 space-y-1 text-gray-800">
         <h3 className="text-lg font-semibold">{name}</h3>
-        <h4
-          className="text-sm text-gray-600 truncate"
-          title={cuisines.join(", ")}
-        >
-          {cuisines.join(", ")}
+        <h4 className="text-sm text-gray-600 truncate" title={cuisines}>
+          {cuisines}
         </h4>
         <div className="flex justify-between items-center text-sm font-medium">
           <span className="text-gray-700">₹{costForTwo / 100} FOR TWO</span>
@@ -42,6 +49,26 @@ const RestaurantCard = (props) => {
       </div>
     </div>
   );
+};
+
+export const promotedRestaurant = (RestaurantCard) => {
+  return (props) => {
+    return (
+      <div className="relative">
+        <div className="absolute top-0 left-0 overflow-visible z-50">
+          <div
+            className="relative bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 shadow-md z-50
+            before:content-[''] before:absolute before:-bottom-1 before:left-0 before:right-0 before:h-1 before:bg-red-700
+            after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-1 after:h-1 after:bg-red-700
+             animate-pulse"
+          >
+            Promoted
+          </div>
+        </div>
+        <RestaurantCard {...props} />
+      </div>
+    );
+  };
 };
 
 export default RestaurantCard;
