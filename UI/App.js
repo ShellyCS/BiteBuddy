@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Body from "./components/Body/Body";
-import Header from "./components/Header/Header";
-import ReserveTable from "./components/ReserveTable/ReserveTable";
-import Login from "./components/Login/Login";
 import Footer from "./components/Footer/Footer";
+import Header from "./components/Header/Header";
+import Login from "./components/Login/Login";
+import ReserveTable from "./components/ReserveTable/ReserveTable";
+import RestaurantDashboard from "./components/restaurant/RestaurantDashboard";
 
 const AppLayout = () => {
   return (
@@ -16,6 +17,7 @@ const AppLayout = () => {
           <Route path="/" element={<Login />} />
           <Route path="/Body" element={<Body />} />
           <Route path="/reserve" element={<ReserveTable />} />
+          <Route path="/restaurant" element={<RestaurantDashboard />} />
           {/* <Route path="/login" element={<Login />} /> */}
         </Routes>
       </div>

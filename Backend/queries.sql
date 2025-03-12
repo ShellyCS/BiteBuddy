@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS bitebuddy;
+
+USE bitebuddy;
+
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     fullName VARCHAR(100),
