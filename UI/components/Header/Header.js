@@ -1,14 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import {
-  HomeIcon,
-  ShoppingCartIcon,
-  UserCircleIcon,
-  TableCellsIcon,
+  ArrowRightOnRectangleIcon,
   BuildingStorefrontIcon,
   ClipboardDocumentListIcon,
-  ArrowRightOnRectangleIcon,
+  HomeIcon,
+  ShoppingCartIcon,
+  TableCellsIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import React from "react";
+import { Link } from "react-router-dom";
 import logo from "../../assets/logo.webp";
 
 const Header = () => {
@@ -45,7 +45,7 @@ const Header = () => {
           </li>
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
             <BuildingStorefrontIcon className="h-5 w-5" />
-            <span>Be-a-seller</span>
+            <Link to="/restaurant">RestaurantDashboard</Link>
           </li>
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
             <ClipboardDocumentListIcon className="h-5 w-5" />
