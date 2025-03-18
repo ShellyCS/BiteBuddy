@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -27,7 +27,7 @@ export default function Login() {
     try {
       if (isLogin) {
         const response = await axios.post(
-          "http://localhost:5000/api/auth/login",
+          "http://localhost:4174/api/auth/login",
           {
             email: formData.email,
             password: formData.password,
@@ -38,7 +38,7 @@ export default function Login() {
         navigate("/Body");
       } else {
         // Sign up API call
-        await axios.post("http://localhost:5000/api/auth/signup", formData);
+        await axios.post("http://localhost:4174/api/auth/signup", formData);
         // alert("Signup successful! Please login.");
         setIsLogin(true);
       }

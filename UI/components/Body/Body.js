@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import RestaurantCard, {
   promotedRestaurant,
 } from "../restaurant/RestaurantCard";
-import { topMeals } from "./topMeal";
 import "./Body.css";
-import axios from "axios";
+import { topMeals } from "./topMeal";
 
 const Body = () => {
   const [search, setSearch] = useState("");
@@ -18,7 +18,7 @@ const Body = () => {
     const fetchRestaurants = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/restaurant/restaurants"
+          "http://localhost:4174/api/restaurant/restaurants"
         );
         setFilteredRestaurants(response.data);
       } catch (err) {

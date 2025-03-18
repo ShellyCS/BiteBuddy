@@ -5,7 +5,7 @@ const authRoutes = require("./routes/authRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
 
 const app = express();
-const PORT = 5000;
+const PORT = 4174;
 
 app.use(cors());
 app.use(bodyParser.json());
