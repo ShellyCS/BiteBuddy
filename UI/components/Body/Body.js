@@ -8,6 +8,7 @@ import { topMeals } from "./topMeal";
 
 const Body = () => {
   const [search, setSearch] = useState("");
+  const [allRestaurants, setAllRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +21,7 @@ const Body = () => {
         const response = await axios.get(
           "http://localhost:4174/api/restaurant/restaurants"
         );
+        setAllRestaurants(response.data);
         setFilteredRestaurants(response.data);
       } catch (err) {
         setError("Failed to fetch restaurants");
@@ -33,10 +35,18 @@ const Body = () => {
 
   const handleSearch = (e) => {
     setSearch(e);
-    const filteredList = filteredRestaurants.filter((data) =>
-      data.name.toLowerCase().includes(e.toLowerCase())
-    );
-    setFilteredRestaurants(filteredList);
+    if (e === "") {
+      setFilteredRestaurants(allRestaurants);
+      return allRestaurants;
+    } else {
+      let filteredList = allRestaurants.filter((data) => {
+        if (data.name.toLowerCase().includes(e.toLowerCase())) {
+          return data;
+        }
+      });
+      setFilteredRestaurants(filteredList);
+      return filteredList;
+    }
   };
 
   const PromotedRestaurantCard = promotedRestaurant(RestaurantCard);
@@ -90,7 +100,7 @@ const Body = () => {
         ))}
       </div>
 
-      <div className="mt-4 flex justify-start">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filteredRestaurants.length > 0 ? (
           filteredRestaurants.map((restaurant) =>
             restaurant.promoted ? (

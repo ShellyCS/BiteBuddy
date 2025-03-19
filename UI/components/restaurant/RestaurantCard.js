@@ -21,7 +21,7 @@ const RestaurantCard = (props) => {
 
   return (
     <div
-      className=" m-1.5 p-1.5 w-2xs hover:shadow-2xl cursor-pointer"
+      className="m-1.5 p-1.5 w-2xs hover:shadow-2xl cursor-pointer"
       style={{ backgroundColor: "#f0f0f0" }}
       onClick={() => handleRestaurantDetails(id)}
     >
@@ -54,18 +54,13 @@ const RestaurantCard = (props) => {
 export const promotedRestaurant = (RestaurantCard) => {
   return (props) => {
     return (
-      <div className="relative">
-        <div className="absolute top-0 left-0 overflow-visible z-50">
-          <div
-            className="relative bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 shadow-md z-50
-            before:content-[''] before:absolute before:-bottom-1 before:left-0 before:right-0 before:h-1 before:bg-red-700
-            after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-1 after:h-1 after:bg-red-700
-             animate-pulse"
-          >
+      <div className="relative overflow-hidden">
+        <RestaurantCard {...props} />
+        <div className="absolute top-0 left-0 z-40">
+          <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 shadow-md animate-pulse">
             Promoted
           </div>
         </div>
-        <RestaurantCard {...props} />
       </div>
     );
   };

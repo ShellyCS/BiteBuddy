@@ -7,6 +7,7 @@ import Header from "./components/Header/Header";
 import Login from "./components/Login/Login";
 import ReserveTable from "./components/ReserveTable/ReserveTable";
 import RestaurantDashboard from "./components/restaurant/RestaurantDashboard";
+import RestaurantMenu from "./components/restaurant/RestaurantMenu";
 
 const AppLayout = () => {
   return (
@@ -19,6 +20,7 @@ const AppLayout = () => {
           <Route path="/reserve" element={<ReserveTable />} />
           <Route path="/restaurant" element={<RestaurantDashboard />} />
           {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/restaurant/:id" element={<RestaurantMenu />} />
         </Routes>
       </div>
       <Footer />

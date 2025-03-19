@@ -87,4 +87,72 @@ VALUES
 'Bangalore', 'Koramangala'),
 (337335, 'Kannur Food Kitchen', 'a27weqanhnszqiuzsoik', 20000, 30, 3.8, 'Kerala,Biryani,Beverages', FALSE, 
 'kannur food point, Chocolate Factory Road, Tavarekere, Cashier Layout, 1st Stage, BTM Layout, thavrakharea, Karnataka, India', 
-'Bangalore', 'BTM Layout');
+'Bangalore', 'BTM Layout'),
+
+(
+    588012, 
+    'SMOOR', 
+    'RX_THUMBNAIL/IMAGES/VENDOR/2025/2/18/67c1f259-4791-40ac-b552-4153de288966_588012.jpg', 
+    450, 
+    27, 
+    4.6, 
+    'Asian, Burgers, Italian, Thai, Sushi, Salads, Pastas, Pizzas, Mexican, Chinese', 
+    FALSE, 
+    'Lavelle Road', 
+    'Bangalore', 
+    'Lavelle Road'
+),
+(
+    748103, 
+    'Thenga Manga by Chef Pillai', 
+    '2d77b522e8d5845b1f4a72fa68bb5d18', 
+    500, 
+    27, 
+    4.1, 
+    'Chinese, Biryani', 
+    FALSE, 
+    'Brigade Road', 
+    'Bangalore', 
+    'Central Bangalore'
+),
+(
+    53490, 
+    'Palmgrove Ballal Residency', 
+    'wf83wrssazu2prtt7rss', 
+    400, 
+    26, 
+    4.7, 
+    'Chinese, Coastal, Desserts, Jain, South Indian', 
+    FALSE, 
+    'Ashok Nagar', 
+    'Bangalore', 
+    'Ashok Nagar'
+),
+(
+    471009, 
+    'Virinchi Cafe', 
+    'yiu5hkb4fqwhtftmmq8v', 
+    250, 
+    18, 
+    4.5, 
+    'South Indian, Fast Food, fastfood', 
+    TRUE, 
+    'Residency Road', 
+    'Bangalore', 
+    'Ashok Nagar'
+),
+(
+    3883, 
+    'Vidyarthi Bhavan', 
+    'tvur6lwwvnd2euflpswm', 
+    150, 
+    34, 
+    4.6, 
+    'South Indian', 
+    FALSE, 
+    'Basavanagudi', 
+    'Bangalore', 
+    'Basavanagudi'
+),
+
+

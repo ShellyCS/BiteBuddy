@@ -5,10 +5,15 @@ export const topMeals = [
       "https://cdn.pixabay.com/photo/2024/04/21/18/44/ai-generated-8711272_1280.jpg",
   },
   {
-    title: "Chicken",
+    title: "Chicken Biryani",
     image:
-      "https://cdn.pixabay.com/photo/2023/08/08/19/02/mediterranean-chicken-8178029_1280.jpg",
+      "https://images.pexels.com/photos/16020573/pexels-photo-16020573/free-photo-of-rice-and-chicken-meal-on-the-plate.jpeg",
   },
+  // {
+  //   title: "Chicken",
+  //   image:
+  //     "https://cdn.pixabay.com/photo/2023/08/08/19/02/mediterranean-chicken-8178029_1280.jpg",
+  // },
   {
     title: "Prawns",
     image:
