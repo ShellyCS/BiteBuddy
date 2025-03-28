@@ -8,22 +8,25 @@ import Login from "./components/Login/Login";
 import ReserveTable from "./components/ReserveTable/ReserveTable";
 import RestaurantDashboard from "./components/restaurant/RestaurantDashboard";
 import RestaurantMenu from "./components/restaurant/RestaurantMenu";
+import ManageFAQ from "./components/ManageFAQ/manageFAQ";
 
 const AppLayout = () => {
   return (
     <Router>
-      <div className="app">
+      <div className="flex flex-col min-h-screen">
         <Header />
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/Body" element={<Body />} />
-          <Route path="/reserve" element={<ReserveTable />} />
-          <Route path="/restaurant" element={<RestaurantDashboard />} />
-          {/* <Route path="/login" element={<Login />} /> */}
-          <Route path="/restaurant/:id" element={<RestaurantMenu />} />
-        </Routes>
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/Body" element={<Body />} />
+            <Route path="/reserve" element={<ReserveTable />} />
+            <Route path="/restaurant" element={<RestaurantDashboard />} />
+            <Route path="/faq" element={<ManageFAQ />} />
+            <Route path="/restaurant/:id" element={<RestaurantMenu />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </Router>
   );
 };

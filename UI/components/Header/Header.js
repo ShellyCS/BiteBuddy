@@ -52,6 +52,10 @@ const Header = () => {
             <span>Orders</span>
           </li>
           <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
+            <BuildingStorefrontIcon className="h-5 w-5" />
+            <Link to="/faq">Manage FAQ</Link>
+          </li>
+          <li className="flex items-center space-x-1 hover:text-indigo-600 cursor-pointer">
             <ArrowRightOnRectangleIcon className="h-5 w-5" />
             <Link to="/">Logout</Link>
           </li>
