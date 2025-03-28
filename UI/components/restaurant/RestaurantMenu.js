@@ -55,6 +55,10 @@ const RestaurantMenu = () => {
     fetchData();
   }, []);
 
+  const handleAddToCart = () => {
+    alert("Added to the cart");
+  };
+
   return (
     <div className="p-4">
       <img
@@ -88,7 +92,7 @@ const RestaurantMenu = () => {
             return (
               <div className="collapse collapse-arrow bg-base-100 border border-base-300">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="my-accordion-2"
                   defaultChecked={menu.type === "Recommended"}
                 />
@@ -117,11 +121,19 @@ const RestaurantMenu = () => {
                               </p>
                             </div>
                             {element?.imageId && (
-                              <img
-                                src={DISH_IMAGE + element.imageId}
-                                alt={element.name}
-                                className="w-30 h-30 object-cover rounded-lg shadow-sm"
-                              />
+                              <div className="flex flex-col items-center">
+                                <img
+                                  src={DISH_IMAGE + element.imageId}
+                                  alt={element.name}
+                                  className="w-20 h-20 object-cover rounded-lg shadow-sm"
+                                />
+                                <button
+                                  className="mt-2 px-3 py-1 text-sm font-semibold bg-yellow-500 text-white rounded-md cursor-pointer"
+                                  onClick={() => handleAddToCart()}
+                                >
+                                  ADD
+                                </button>
+                              </div>
                             )}
                           </li>
                           {!isOnlyOneItem && !isLastItem && (
