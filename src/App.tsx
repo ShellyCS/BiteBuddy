@@ -1,16 +1,20 @@
 import { Toaster } from 'react-hot-toast';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Pages
+import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import RestaurantDashboard from './pages/RestaurantDashboard';
 import RestaurantDetail from './pages/RestaurantDetail';
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -65,7 +69,8 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/about" element={<AboutUs />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
     </Routes>
   );
 }
@@ -79,6 +84,7 @@ function App() {
           <main className="container mx-auto px-4 py-8">
             <AppRoutes />
           </main>
+          <Footer />
           <Toaster position="top-right" />
         </div>
       </Router>
