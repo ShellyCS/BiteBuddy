@@ -1,4 +1,4 @@
-import { Home, LogOut, User, Utensils } from 'lucide-react';
+import { Home, LogOut, MessageCircle, User, Utensils } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -30,6 +30,13 @@ export default function Navbar() {
               <Link to="/" className={`flex items-center ${isActive('/')}`}>
                 <Home className="h-5 w-5 mr-1" />
                 <span>Home</span>
+              </Link>
+            </div>
+
+            <div className="hidden md:flex items-center space-x-4">
+              <Link to="/contact" className={`flex items-center ${isActive('/contact')}`}>
+                <MessageCircle className="h-5 w-5 mr-1" />
+                <span>Contact Us</span>
               </Link>
             </div>
           </div>
