@@ -1,0 +1,229 @@
+import { format } from 'date-fns';
+import { Calendar, Clock, Trash2, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useAuth } from '../contexts/AuthContext';
+import { orders as ordersApi, reservations as reservationsApi } from '../lib/api';
+
+interface Order {
+  id: number;
+  restaurant_name: string;
+  timestamp: string;
+  status: string;
+  total: number;
+  items: any[];
+}
+
+interface Reservation {
+  id: string;
+  restaurant_name: string;
+  date: string;
+  time: string;
+  guests: number;
+  status: string;
+}
+
+export default function Profile() {
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    try {
+      const [ordersRes, reservationsRes] = await Promise.all([
+        ordersApi.getUserOrders(),
+        reservationsApi.getUserReservations()
+      ]);
+
+      setOrders(ordersRes.data);
+      setReservations(reservationsRes.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      toast.error('Failed to load user data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelReservation = async (reservationId: string) => {
+    try {
+      await reservationsApi.updateStatus(reservationId, 'cancelled');
+      toast.success('Reservation cancelled successfully');
+      fetchUserData();
+    } catch (error) {
+      toast.error('Failed to cancel reservation');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+      </div>
+    );
+  }
+
+  const renderProfile = () => (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="space-y-4">
+        <div className="flex justify-between items-start">
+          <h3 className="text-xl font-bold">Personal Information</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-center text-gray-600">
+            <User className="h-5 w-5 mr-2 text-gray-400" />
+            <span>{user.email}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderOrders = () => (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold">Order History</h3>
+      <div className="grid gap-4">
+        {orders.map((order) => (
+          <div key={order.id} className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h4 className="font-semibold text-lg">{order.restaurant_name}</h4>
+                <p className="text-sm text-gray-500">
+                  {format(new Date(order.timestamp), 'MMMM d, yyyy')}
+                </p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                order.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {order.status}
+              </span>
+            </div>
+            <div className="border-t border-gray-200 pt-4">
+              {order.items.map((item: any, index: number) => (
+                <div key={index} className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">
+                    {item.quantity}x {item.name}
+                  </span>
+                  <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+              <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
+                <span className="font-semibold">Total</span>
+                <span className="font-semibold text-yellow-500">${order.total.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderReservations = () => (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold">My Reservations</h3>
+      <div className="grid gap-4">
+        {reservations.map((reservation) => (
+          <div key={reservation.id} className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-semibold text-lg">{reservation.restaurant_name}</h4>
+                <div className="space-y-2 mt-2">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="h-5 w-5 mr-2 text-gray-400" />
+                    <span>{format(new Date(reservation.date), 'MMMM d, yyyy')}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Clock className="h-5 w-5 mr-2 text-gray-400" />
+                    <span>{format(new Date(`2000-01-01T${reservation.time}`), 'h:mm a')}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <User className="h-5 w-5 mr-2 text-gray-400" />
+                    <span>{reservation.guests} {reservation.guests === 1 ? 'Guest' : 'Guests'}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col items-end space-y-2">
+                <span className={`px-3 py-1 rounded-full text-sm ${
+                  reservation.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {reservation.status}
+                </span>
+                {reservation.status !== 'cancelled' && (
+                  <button
+                    onClick={() => handleCancelReservation(reservation.id)}
+                    className="text-red-500 hover:text-red-600 flex items-center"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold">My Profile</h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="md:col-span-1">
+          <nav className="space-y-1">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                activeTab === 'profile'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <User className="h-5 w-5 mr-2" />
+              Profile
+            </button>
+            <button
+              onClick={() => setActiveTab('orders')}
+              className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                activeTab === 'orders'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Clock className="h-5 w-5 mr-2" />
+              Orders
+            </button>
+            <button
+              onClick={() => setActiveTab('reservations')}
+              className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                activeTab === 'reservations'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Calendar className="h-5 w-5 mr-2" />
+              Reservations
+            </button>
+          </nav>
+        </div>
+
+        <div className="md:col-span-3">
+          {activeTab === 'profile' && renderProfile()}
+          {activeTab === 'orders' && renderOrders()}
+          {activeTab === 'reservations' && renderReservations()}
+        </div>
+      </div>
+    </div>
+  );
+}
