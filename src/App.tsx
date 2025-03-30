@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Pages
+import Contact from './pages/Contact';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
@@ -54,6 +55,7 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
       <Route 
         path="/profile" 
