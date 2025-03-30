@@ -4,7 +4,7 @@ export default function Contact() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-yellow-500">Contact Us</h1>
         
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-8">
@@ -14,21 +14,21 @@ export default function Contact() {
                 <h2 className="text-2xl font-semibold mb-6">Get in Touch</h2>
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <Phone className="w-6 h-6 text-primary-500 mr-4" />
+                    <Phone className="w-6 h-6 text-yellow-500 mr-4" />
                     <div>
                       <h3 className="font-medium">Phone</h3>
                       <p className="text-gray-600">+1 (555) 123-4567</p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <Mail className="w-6 h-6 text-primary-500 mr-4" />
+                    <Mail className="w-6 h-6 text-yellow-500 mr-4" />
                     <div>
                       <h3 className="font-medium">Email</h3>
                       <p className="text-gray-600">support@bitebuddy.com</p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <MapPin className="w-6 h-6 text-primary-500 mr-4" />
+                    <MapPin className="w-6 h-6 text-yellow-500 mr-4" />
                     <div>
                       <h3 className="font-medium">Address</h3>
                       <p className="text-gray-600">
@@ -52,8 +52,8 @@ export default function Contact() {
                     <input
                       type="text"
                       id="name"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                    />
+                      className="mt-1 block w-full rounded-md border border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 p-2"
+                      />
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -62,8 +62,8 @@ export default function Contact() {
                     <input
                       type="email"
                       id="email"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                    />
+                      className="mt-1 block w-full rounded-md border border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 p-2"
+                      />
                   </div>
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700">
@@ -72,12 +72,12 @@ export default function Contact() {
                     <textarea
                       id="message"
                       rows={4}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                    ></textarea>
+                      className="mt-1 block w-full rounded-md border border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 p-2"
+                      ></textarea>
                   </div>
                   <button
                     type="submit"
-                    className="w-full bg-primary-500 text-white py-2 px-4 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    className="w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                   >
                     Send Message
                   </button>
@@ -89,7 +89,7 @@ export default function Contact() {
 
         {/* FAQ Section */}
         <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-yellow-500">Frequently Asked Questions</h2>
           <div className="space-y-4">
             <details className="bg-white rounded-lg shadow-sm p-4">
               <summary className="font-medium cursor-pointer">How do I place an order?</summary>
