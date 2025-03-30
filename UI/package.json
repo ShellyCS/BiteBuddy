@@ -2,7 +2,7 @@
   "name": "bitebuddy",
   "version": "1.0.0",
   "description": "Food Delivery",
-  "main": "App.js",
+  "source": "App.js",
   "scripts": {
     "test": "jest",
     "start": "parcel index.html",
