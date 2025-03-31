@@ -282,17 +282,18 @@ export default function RestaurantDashboard() {
                   {profile?.recentOrders.map(order => (
                     <tr key={order.id}>
                       <td className="px-6 py-4 whitespace-nowrap">{order.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{order.customer_email}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">{order.user_id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{order.items}</td>
+                      {/* <td className="px-6 py-4">
                         {JSON.parse(order.items).map((item: any, index: number) => (
                           <div key={index}>{item.name} x{item.quantity}</div>
                         ))}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">${order.total.toFixed(2)}</td>
+                      </td> */}
+                      <td className="px-6 py-4 whitespace-nowrap">${order.total}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          order.status === 'preparing' ? 'bg-yellow-100 text-yellow-800' :
+                          order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
                           {order.status}
