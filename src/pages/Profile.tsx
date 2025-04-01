@@ -107,17 +107,10 @@ export default function Profile() {
               </span>
             </div>
             <div className="border-t border-gray-200 pt-4">
-              {order.items.map((item: any, index: number) => (
-                <div key={index} className="flex justify-between items-center mb-2">
-                  <span className="text-gray-600">
-                    {item.quantity}x {item.name}
-                  </span>
-                  <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
+            <td className="px-6 py-4 whitespace-nowrap">{order.items}</td>
               <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
                 <span className="font-semibold">Total</span>
-                <span className="font-semibold text-yellow-500">${order.total.toFixed(2)}</span>
+                <span className="font-semibold text-yellow-500">${order.total}</span>
               </div>
             </div>
           </div>

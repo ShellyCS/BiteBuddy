@@ -49,14 +49,43 @@ export default function RestaurantDetail() {
 
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    if (!user) {
+      toast.error("You need to be logged in to make a reservation.");
+      return;
+    }
+  
     try {
-      // API call will go here
+      const response = await fetch('/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          restaurantId: id, // Use the id from useParams()
+          date: reservationData.date,
+          time: reservationData.time,
+          guests: reservationData.guests,
+          specialRequests: reservationData.specialRequests,
+          customerName: user.displayName || "Guest",
+          customerEmail: user.email || "",
+          customerPhone: user.phone || "",
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit reservation');
+      }
+  
       toast.success('Reservation submitted successfully!');
       setIsReservationModalOpen(false);
-    } catch (error) {
-      toast.error('Failed to submit reservation. Please try again.');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to submit reservation. Please try again.');
     }
   };
+  
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

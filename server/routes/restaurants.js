@@ -60,7 +60,7 @@ router.get('/profile/:id', verifyToken, isRestaurantOwner, async (req, res) => {
 
     // Get recent orders
     const [orders] = await connection.execute(
-      `SELECT o.*, u.email as customer_email
+      `SELECT o.*, u.email as customer_email, u.fullName as customer_name
        FROM orders o
        JOIN users u ON o.user_id = u.id
        WHERE o.restaurant_id = ?
