@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { reservations } from '../lib/api';
 
 export default function RestaurantDetail() {
   const { id } = useParams();
@@ -47,6 +48,44 @@ export default function RestaurantDetail() {
     ]
   };
 
+  // const handleReservationSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  
+  //   if (!user) {
+  //     toast.error("You need to be logged in to make a reservation.");
+  //     return;
+  //   }
+  
+  //   try {
+  //     const response = await fetch('/api/reservations', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         restaurantId: id, // Use the id from useParams()
+  //         date: reservationData.date,
+  //         time: reservationData.time,
+  //         guests: reservationData.guests,
+  //         specialRequests: reservationData.specialRequests,
+  //         customerName: user.displayName || "Guest",
+  //         customerEmail: user.email || "",
+  //         customerPhone: user.phone || "",
+  //       }),
+  //     });
+  
+  //     const data = await response.json();
+  
+  //     if (!response.ok) {
+  //       throw new Error(data.message || 'Failed to submit reservation');
+  //     }
+  
+  //     toast.success('Reservation submitted successfully!');
+  //     setIsReservationModalOpen(false);
+  //   } catch (error: any) {
+  //     toast.error(error.message || 'Failed to submit reservation. Please try again.');
+  //   }
+  // };
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
@@ -56,33 +95,22 @@ export default function RestaurantDetail() {
     }
   
     try {
-      const response = await fetch('/reservations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          restaurantId: id, // Use the id from useParams()
-          date: reservationData.date,
-          time: reservationData.time,
-          guests: reservationData.guests,
-          specialRequests: reservationData.specialRequests,
-          customerName: user.displayName || "Guest",
-          customerEmail: user.email || "",
-          customerPhone: user.phone || "",
-        }),
+      await reservations.create({
+        restaurantId: id, // Use the id from useParams()
+        date: reservationData.date,
+        time: reservationData.time,
+        guests: reservationData.guests,
+        occasion: reservationData.occasion || "",
+        specialRequests: reservationData.specialRequests,
+        customerName: user.displayName || "Guest",
+        customerEmail: user.email || "",
+        customerPhone: user.phone || "",
       });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit reservation');
-      }
   
       toast.success('Reservation submitted successfully!');
       setIsReservationModalOpen(false);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to submit reservation. Please try again.');
+      toast.error(error.response?.data?.message || 'Failed to submit reservation. Please try again.');
     }
   };
   
