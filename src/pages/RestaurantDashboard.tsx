@@ -282,7 +282,7 @@ export default function RestaurantDashboard() {
                   {profile?.recentOrders.map(order => (
                     <tr key={order.id}>
                       <td className="px-6 py-4 whitespace-nowrap">{order.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{order.user_id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{order.customer_name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{order.items}</td>
                       {/* <td className="px-6 py-4">
                         {JSON.parse(order.items).map((item: any, index: number) => (

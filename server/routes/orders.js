@@ -43,12 +43,12 @@ router.get('/user', verifyToken, async (req, res) => {
     );
 
     // Parse items JSON string for each order
-    const formattedOrders = orders.map(order => ({
-      ...order,
-      items: JSON.parse(order.items)
-    }));
+    // const formattedOrders = orders.map(order => ({
+    //   ...order,
+    //   items: JSON.parse(order.items)
+    // }));
 
-    res.json(formattedOrders);
+    res.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ message: 'Error fetching orders', error: error.message });
