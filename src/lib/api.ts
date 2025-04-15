@@ -71,10 +71,23 @@ export const reservations = {
     api.put(`/reservations/${reservationId}/status`, { status }),
 };
 
-// ✅ New: Campaigns API
+// Campaigns API
 export const campaigns = {
   getByRestaurantId: (restaurantId: string) =>
     api.get(`/campaigns/restaurant/${restaurantId}`),
 };
+
+// Carts API
+export const cart = {
+  add: (data: { user_id: number; item_id: number; quantity: number }) =>
+    api.post("/cart/add", data),
+  get: (user_id: number) => api.get(`/cart/${user_id}`),
+  update: (data: { user_id: number; item_id: number; quantity: number }) =>
+    api.put("/cart/update", data),
+  remove: (data: { user_id: number; item_id: number }) =>
+    api.delete("/cart/remove", { data }),
+  clear: (user_id: number) => api.delete(`/cart/clear/${user_id}`),
+};
+
 
 export default api;
