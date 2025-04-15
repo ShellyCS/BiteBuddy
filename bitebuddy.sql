@@ -192,3 +192,42 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-03-30  5:05:10
+
+
+CREATE TABLE campaigns (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  objective ENUM('Awareness', 'Engagement', 'Conversion') NOT NULL,
+  budget DECIMAL(10, 2) NOT NULL,
+  status ENUM('active', 'paused', 'completed') DEFAULT 'active',
+  impressions INT DEFAULT 0,
+  clicks INT DEFAULT 0
+);
+
+ALTER TABLE campaigns
+ADD COLUMN restaurant_id INT NOT NULL,
+ADD CONSTRAINT fk_restaurant
+FOREIGN KEY (restaurant_id) REFERENCES restaurant(id);
+
+INSERT INTO campaigns (name, objective, budget, status, impressions, clicks, restaurant_id)
+VALUES 
+  ('Summer Sizzlers', 'Awareness', 120.00, 'active', 1500, 130, 229),
+  ('Weekend Binge Blast', 'Engagement', 200.00, 'paused', 2200, 270, 3883),
+  ('Midnight Madness', 'Conversion', 175.00, 'active', 1800, 210, 53490),
+  ('Monsoon Meal Deal', 'Awareness', 95.00, 'completed', 1000, 80, 121603),
+  ('Lunch Combo Promo', 'Engagement', 85.50, 'active', 1300, 190, 307050),
+  ('Taco Tuesday', 'Conversion', 145.00, 'active', 1700, 205, 334475),
+  ('Happy Hour Special', 'Awareness', 110.00, 'paused', 900, 100, 337335),
+  ('Family Feast Friday', 'Engagement', 180.00, 'completed', 1600, 220, 588012),
+  ('Weekend Wings Offer', 'Conversion', 160.00, 'active', 2000, 240, 471009),
+  ('BBQ Burger Launch', 'Awareness', 100.00, 'active', 1200, 100, 229),
+  ('Lunch Combo Deal', 'Engagement', 80.00, 'active', 950, 85, 3883),
+  ('Friday Night Pizza Promo', 'Conversion', 150.00, 'paused', 2000, 180, 53490),
+  ('Happy Hour Special', 'Engagement', 60.00, 'active', 890, 73, 121603),
+  ('Weekend Breakfast Buzz', 'Awareness', 50.00, 'completed', 1500, 112, 307050),
+  ('Kids Eat Free Tuesday', 'Conversion', 75.00, 'active', 2300, 210, 334475),
+  ('Taco Thursday Fiesta', 'Engagement', 95.00, 'paused', 1750, 134, 337335),
+  ('Vegan Delights Launch', 'Awareness', 130.00, 'active', 980, 92, 588012),
+  ('Late Night Cravings', 'Engagement', 110.00, 'active', 1450, 120, 471009),
+  ('Birthday Bash Offer', 'Conversion', 140.00, 'active', 1600, 140, 748103),
+  ('Grill & Chill Nights', 'Awareness', 210.00, 'active', 2500, 300, 748103);

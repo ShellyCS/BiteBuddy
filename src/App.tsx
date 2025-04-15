@@ -1,20 +1,25 @@
-import { Toaster } from 'react-hot-toast';
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Footer from './components/Footer';
-import Navbar from './components/Navbar';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Toaster } from "react-hot-toast";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 // Pages
-import AboutUs from './pages/AboutUs';
-import Contact from './pages/Contact';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import Profile from './pages/Profile';
-import Register from './pages/Register';
-import RestaurantDashboard from './pages/RestaurantDashboard';
-import RestaurantDetail from './pages/RestaurantDetail';
-
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Profile from "./pages/Profile";
+import Register from "./pages/Register";
+import RestaurantDashboard from "./pages/RestaurantDashboard";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import CampaignList from "./pages/CampaignList";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -45,32 +50,42 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/login" element={
-        user ? <Navigate to="/" replace /> : <Login />
-      } />
-      <Route path="/register" element={
-        user ? <Navigate to="/" replace /> : <Register />
-      } />
-      <Route 
-        path="/dashboard" 
+      <Route
+        path="/login"
+        element={user ? <Navigate to="/" replace /> : <Login />}
+      />
+      <Route
+        path="/register"
+        element={user ? <Navigate to="/" replace /> : <Register />}
+      />
+      <Route
+        path="/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['restaurant']}>
+          <ProtectedRoute allowedRoles={["restaurant"]}>
             <RestaurantDashboard />
           </ProtectedRoute>
-        } 
+        }
       />
       <Route path="/contact" element={<Contact />} />
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
-      <Route 
-        path="/profile" 
+      <Route
+        path="/profile"
         element={
-          <ProtectedRoute allowedRoles={['diner']}>
+          <ProtectedRoute allowedRoles={["diner"]}>
             <Profile />
           </ProtectedRoute>
-        } 
+        }
       />
       <Route path="/about" element={<AboutUs />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route
+        path="/restaurant/:id/campaigns"
+        element={
+          <ProtectedRoute allowedRoles={["restaurant"]}>
+            <CampaignList />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
