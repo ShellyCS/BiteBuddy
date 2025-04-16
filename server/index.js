@@ -6,7 +6,6 @@ import { Server } from "socket.io";
 import { verifyToken } from "./middleware/auth.js";
 import adCampaignRoutes from "./routes/adCampaign.js";
 import authRoutes from "./routes/auth.js";
-import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/orders.js";
 import reservationRoutes from "./routes/reservations.js";
 import restaurantRoutes from "./routes/restaurants.js";
@@ -31,7 +30,6 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/orders", verifyToken, orderRoutes);
 app.use("/api/reservations", verifyToken, reservationRoutes);
 app.use("/api/campaigns", verifyToken, adCampaignRoutes);
-app.use("/api/cart", verifyToken, cartRoutes);
 
 
 // WebSocket connection handling

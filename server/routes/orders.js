@@ -15,7 +15,7 @@ router.post('/', verifyToken, async (req, res) => {
 
     const [orderResult] = await connection.execute(
       'INSERT INTO orders (user_id, restaurant_id, items, total, status) VALUES (?, ?, ?, ?, "pending")',
-      [userId, restaurantId, JSON.stringify(items), total]
+      [userId, restaurantId, items, total]
     );
 
     await connection.commit();
@@ -76,7 +76,7 @@ router.get('/restaurant/:id', verifyToken, async (req, res) => {
       items: JSON.parse(order.items)
     }));
 
-    res.json(formattedOrders);
+    res.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ message: 'Error fetching orders', error: error.message });
