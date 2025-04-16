@@ -11,6 +11,8 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 // Pages
 import AboutUs from "./pages/AboutUs";
+import CampaignList from "./pages/CampaignList";
+import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -19,7 +21,6 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import RestaurantDetail from "./pages/RestaurantDetail";
-import CampaignList from "./pages/CampaignList";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -86,6 +87,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute allowedRoles={["diner"]}>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
@@ -106,5 +115,6 @@ function App() {
     </AuthProvider>
   );
 }
+
 
 export default App;
