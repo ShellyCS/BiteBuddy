@@ -229,7 +229,7 @@ export default function RestaurantDashboard() {
                     <div>
                       <h4 className="font-semibold">{item.name}</h4>
                       <p className="text-gray-600">{item.description}</p>
-                      <p className="text-yellow-500 font-semibold">${item.price.toFixed(2)}</p>
+                      <p className="text-yellow-500 font-semibold">${Number(item.price).toFixed(2)}</p>
                       <p className="text-sm text-gray-500">{item.category}</p>
                     </div>
                     <div className="flex space-x-2">
@@ -283,12 +283,21 @@ export default function RestaurantDashboard() {
                     <tr key={order.id}>
                       <td className="px-6 py-4 whitespace-nowrap">{order.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{order.customer_name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{order.items}</td>
-                      {/* <td className="px-6 py-4">
-                        {JSON.parse(order.items).map((item: any, index: number) => (
-                          <div key={index}>{item.name} x{item.quantity}</div>
-                        ))}
-                      </td> */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                      {(() => {
+                        try {
+                          const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                          return Array.isArray(items)
+                            ? items.map((item: any, index: number) => (
+                                <div key={index}>{item.name} x {item.quantity}</div>
+                              ))
+                            : "No items";
+                        } catch {
+                          return "No items";
+                        }
+                      })()}
+                    </td>
+                      {/* <td className="px-6 py-4 whitespace-nowrap">{order.items}</td> */}
                       <td className="px-6 py-4 whitespace-nowrap">${order.total}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

@@ -25,7 +25,7 @@ interface Reservation {
 
 export default function Profile() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('orders');
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -91,30 +91,97 @@ export default function Profile() {
     <div className="space-y-4">
       <h3 className="text-xl font-bold">Order History</h3>
       <div className="grid gap-4">
-        {orders.map((order) => (
-          <div key={order.id} className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h4 className="font-semibold text-lg">{order.restaurant_name}</h4>
-                <p className="text-sm text-gray-500">
-                  {format(new Date(order.timestamp), 'MMMM d, yyyy')}
-                </p>
+        {orders.map((order) => {
+          // Ensure total is a number
+          const totalNum = parseFloat(order.total as any);
+          
+          // Calculate order components - ensuring we have numbers
+          const subtotal = parseFloat((totalNum * 1.0).toFixed(2)); 
+          const deliveryFee = 50;
+          const tax = parseFloat((subtotal * 0.05).toFixed(2));
+          const calculatedTotal = parseFloat((subtotal + deliveryFee + tax).toFixed(2));
+          
+          return (
+            <div key={order.id} className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h4 className="font-semibold text-lg">{order.restaurant_name}</h4>
+                  <p className="text-sm text-gray-500">
+                    {format(new Date(order.timestamp), 'MMMM d, yyyy')}
+                  </p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-sm ${
+                  order.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {order.status}
+                </span>
               </div>
-              <span className={`px-3 py-1 rounded-full text-sm ${
-                order.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {order.status}
-              </span>
-            </div>
-            <div className="border-t border-gray-200 pt-4">
-            <td className="px-6 py-4 whitespace-nowrap">{order.items}</td>
-              <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
-                <span className="font-semibold">Total</span>
-                <span className="font-semibold text-yellow-500">${order.total}</span>
+              <div className="border-t border-gray-200 pt-4">
+                {/* Parse and display the order items properly */}
+                <div className="space-y-2">
+                  {(() => {
+                    try {
+                      // Try to parse the JSON string
+                      const parsedItems = JSON.parse(order.items as any);
+                      
+                      // Handle both array of items and single item
+                      if (Array.isArray(parsedItems)) {
+                        return parsedItems.map((item, idx) => (
+                          <div key={idx} className="flex justify-between py-1">
+                            <div className="flex items-center">
+                              <span className="font-medium">{item.name}</span>
+                              <span className="text-gray-500 ml-2">x{item.quantity || 1}</span>
+                            </div>
+                            <span>₹{parseFloat(item.price).toFixed(2)}</span>
+                          </div>
+                        ));
+                      } else {
+                        return (
+                          <div className="flex justify-between py-1">
+                            <div className="flex items-center">
+                              <span className="font-medium">{parsedItems.name}</span>
+                              <span className="text-gray-500 ml-2">x{parsedItems.quantity || 1}</span>
+                            </div>
+                            <span>₹{parseFloat(parsedItems.price).toFixed(2)}</span>
+                          </div>
+                        );
+                      }
+                    } catch (e) {
+                      // If parsing fails, display it in a cleaner format
+                      return (
+                        <div className="py-1">
+                          {typeof order.items === 'string' ? 
+                            order.items.replace(/[{}"\\]/g, '').replace(/,/g, ', ').replace(/:/g, ': ') : 
+                            'Item information not available'}
+                        </div>
+                      );
+                    }
+                  })()}
+                </div>
+                
+                {/* Order totals section with delivery fee and tax */}
+                <div className="border-t border-gray-200 mt-4 pt-4 space-y-2">
+                  <div className="flex justify-between items-center text-gray-600">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-600">
+                    <span>Delivery Fee</span>
+                    <span>₹{deliveryFee.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-600">
+                    <span>Tax (5%)</span>
+                    <span>₹{tax.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center font-semibold pt-2 border-t border-gray-100">
+                    <span>Total</span>
+                    <span className="text-yellow-500">₹{totalNum.toFixed(2)}</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -145,7 +212,9 @@ export default function Profile() {
               </div>
               <div className="flex flex-col items-end space-y-2">
                 <span className={`px-3 py-1 rounded-full text-sm ${
-                  reservation.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  reservation.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                  reservation.status === 'cancelled' ? 'bg-red-100 text-red-800' : 
+                  'bg-yellow-100 text-yellow-800'
                 }`}>
                   {reservation.status}
                 </span>

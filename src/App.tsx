@@ -5,14 +5,16 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
+import Cart from './components/Cart';
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { CartProvider } from './contexts/CartContext';
 
 // Pages
 import AboutUs from "./pages/AboutUs";
 import CampaignList from "./pages/CampaignList";
-import Cart from "./pages/Cart";
+import Checkout from './pages/Checkout';
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -87,14 +89,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute allowedRoles={["diner"]}>
-            <Cart />
-          </ProtectedRoute>
-        }
-      />
+      <Route 
+         path="/checkout" 
+         element={
+           <ProtectedRoute allowedRoles={['diner']}>
+             <Checkout />
+           </ProtectedRoute>
+         } 
+       />
     </Routes>
   );
 }
@@ -102,6 +104,7 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
+      <CartProvider>
       <Router>
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Navbar />
@@ -109,9 +112,11 @@ function App() {
             <AppRoutes />
           </main>
           <Footer />
+          <Cart />
           <Toaster position="top-right" />
         </div>
       </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }
