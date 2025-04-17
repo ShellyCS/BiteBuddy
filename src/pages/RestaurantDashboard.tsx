@@ -271,6 +271,9 @@ export default function RestaurantDashboard() {
                       Items
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Quantity
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -289,7 +292,21 @@ export default function RestaurantDashboard() {
                           const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
                           return Array.isArray(items)
                             ? items.map((item: any, index: number) => (
-                                <div key={index}>{item.name} x {item.quantity}</div>
+                                <div key={index}>{item.name}</div>
+                              ))
+                            : "No items";
+                        } catch {
+                          return "No items";
+                        }
+                      })()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {(() => {
+                        try {
+                          const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                          return Array.isArray(items)
+                            ? items.map((item: any, index: number) => (
+                                <div key={index}>{item.quantity}</div>
                               ))
                             : "No items";
                         } catch {
