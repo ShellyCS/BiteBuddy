@@ -196,17 +196,9 @@ export default function RestaurantDetail() {
                             ${(item.price / 30).toFixed(2)}
                           </p>
                         </div>
-                        <button onClick={() => handleAddItem(item)}>
-                          Add Item
-                        </button>
                         <button
                           onClick={() => {
-                            addItem({
-                              id: item.id,
-                              restaurantId: parseInt(id),
-                              name: item.name,
-                              price: item.price,
-                            });
+                            handleAddItem(item);
 
                             toast.success(`${item.name} added to cart`);
                           }}

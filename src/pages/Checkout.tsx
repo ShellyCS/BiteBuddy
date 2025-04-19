@@ -8,6 +8,7 @@ import { orders as ordersApi, restaurants as restaurantsApi } from "../lib/api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addItem,
+  clearCart,
   removeEntireItem,
   removeItem,
   selectCartTotal,
@@ -118,7 +119,7 @@ export default function Checkout() {
       });
 
       toast.success("Order placed successfully!");
-      // clearCart();
+      dispatch(clearCart());
       navigate("/profile");
     } catch (error) {
       console.error("Error placing order:", error);
