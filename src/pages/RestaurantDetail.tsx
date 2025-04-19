@@ -1,28 +1,36 @@
-import { Dialog, Transition } from '@headlessui/react';
-import { format } from 'date-fns';
-import { Calendar, Clock, MapPin, Phone, ShoppingBag, Star, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useCart } from '../contexts/CartContext';
-import { reservations, restaurants as restaurantsApi } from '../lib/api';
+import { Dialog, Transition } from "@headlessui/react";
+import { format } from "date-fns";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Phone,
+  ShoppingBag,
+  Star,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { reservations, restaurants as restaurantsApi } from "../lib/api";
+import { useDispatch } from "react-redux";
+import { addItem } from "../utils/cartSlice";
 
 export default function RestaurantDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { addItem } = useCart();
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSponsored, setIsSponsored] = useState(true); // 🔹 Hardcoded flag
   const [reservationData, setReservationData] = useState({
-    date: format(new Date(), 'yyyy-MM-dd'),
-    time: '19:00',
+    date: format(new Date(), "yyyy-MM-dd"),
+    time: "19:00",
     guests: 2,
-    specialRequests: '',
-    occasion: ''
+    specialRequests: "",
+    occasion: "",
   });
 
   useEffect(() => {
@@ -31,8 +39,8 @@ export default function RestaurantDetail() {
         const { data } = await restaurantsApi.getById(id);
         setRestaurant(data);
       } catch (error) {
-        console.error('Error fetching restaurant details:', error);
-        toast.error('Failed to load restaurant details');
+        console.error("Error fetching restaurant details:", error);
+        toast.error("Failed to load restaurant details");
       } finally {
         setLoading(false);
       }
@@ -43,12 +51,12 @@ export default function RestaurantDetail() {
 
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!user) {
       toast.error("You need to be logged in to make a reservation.");
       return;
     }
-  
+
     try {
       await reservations.create({
         restaurantId: id,
@@ -61,11 +69,14 @@ export default function RestaurantDetail() {
         customerEmail: user.email || "",
         customerPhone: user.phone || "",
       });
-  
-      toast.success('Reservation submitted successfully!');
+
+      toast.success("Reservation submitted successfully!");
       setIsReservationModalOpen(false);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to submit reservation. Please try again.');
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to submit reservation. Please try again."
+      );
     }
   };
 
@@ -80,10 +91,25 @@ export default function RestaurantDetail() {
   if (!restaurant) {
     return (
       <div className="text-center py-8">
-        <h2 className="text-2xl font-bold text-gray-700">Restaurant not found</h2>
+        <h2 className="text-2xl font-bold text-gray-700">
+          Restaurant not found
+        </h2>
       </div>
     );
   }
+
+  const dispatch = useDispatch();
+
+  const handleAddItem = (item) => {
+    const itemToBePassed = {
+      id: parseInt(item.id),
+      name: item.name,
+      price: parseInt(item.price),
+      quantity: 1,
+    };
+    // dispatch an action
+    dispatch(addItem(itemToBePassed));
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -117,7 +143,9 @@ export default function RestaurantDetail() {
                 <MapPin className="h-5 w-5 mr-1" />
                 {restaurant.address}
               </span>
-              <span>{'$'.repeat(Math.ceil(restaurant.costForTwo / 15000))}</span>
+              <span>
+                {"$".repeat(Math.ceil(restaurant.costForTwo / 15000))}
+              </span>
             </div>
           </div>
         </div>
@@ -126,10 +154,9 @@ export default function RestaurantDetail() {
       {/* Restaurant Info */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {/* About */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">About</h2>
-            <p className="text-gray-600 mb-4">{restaurant.cuisines}</p>
+            <p className="text-gray-600 mb-4">{restaurant?.cuisines}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center text-gray-600">
                 <Phone className="h-5 w-5 mr-2 text-gray-400" />
@@ -137,48 +164,61 @@ export default function RestaurantDetail() {
               </div>
               <div className="flex items-center text-gray-600">
                 <Clock className="h-5 w-5 mr-2 text-gray-400" />
-                {restaurant.deliveryTime} min delivery time
+                {restaurant?.deliveryTime} min delivery time
               </div>
               <div className="flex items-center text-gray-600">
                 <MapPin className="h-5 w-5 mr-2 text-gray-400" />
-                {restaurant.address}
+                {restaurant?.address}
               </div>
             </div>
           </div>
 
-          {/* Menu */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-bold mb-6">Menu</h2>
-            {restaurant.menu && restaurant.menu.map((category, index) => (
-              <div key={index} className="mb-8 last:mb-0">
-                <h3 className="text-xl font-semibold mb-4">{category.category}</h3>
-                <div className="grid gap-4">
-                  {category.items.map((item) => (
-                    <div key={item.id} className="flex justify-between items-start p-3 hover:bg-gray-50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium">{item.name}</h4>
-                        <p className="text-sm text-gray-600">{item.description}</p>
-                        <p className="font-medium text-yellow-500">₹{item.price}</p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          addItem({
-                            id: item.id,
-                            restaurantId: parseInt(id),
-                            name: item.name,
-                            price: item.price
-                          }, 1);
-                          toast.success(`${item.name} added to cart`);
-                        }}
-                        className="p-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors"
+            {restaurant?.menu &&
+              restaurant?.menu.map((category, index) => (
+                <div key={index} className="mb-8 last:mb-0">
+                  <h3 className="text-xl font-semibold mb-4">
+                    {category.category}
+                  </h3>
+                  <div className="grid gap-4">
+                    {category.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex justify-between items-start p-3 hover:bg-gray-50 rounded-lg"
                       >
-                        <ShoppingBag className="h-5 w-5" />
-                      </button>
-                    </div>
-                  ))}
+                        <div>
+                          <h4 className="font-medium">{item.name}</h4>
+                          <p className="text-sm text-gray-600">
+                            {item.description}
+                          </p>
+                          <p className="font-medium text-yellow-500">
+                            ${(item.price / 30).toFixed(2)}
+                          </p>
+                        </div>
+                        <button onClick={() => handleAddItem(item)}>
+                          Add Item
+                        </button>
+                        <button
+                          onClick={() => {
+                            addItem({
+                              id: item.id,
+                              restaurantId: parseInt(id),
+                              name: item.name,
+                              price: item.price,
+                            });
+
+                            toast.success(`${item.name} added to cart`);
+                          }}
+                          className="p-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors"
+                        >
+                          <ShoppingBag className="h-5 w-5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -238,7 +278,12 @@ export default function RestaurantDetail() {
               <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
             </Transition.Child>
 
-            <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
 
             <Transition.Child
               as={React.Fragment}
@@ -250,69 +295,109 @@ export default function RestaurantDetail() {
               leaveTo="opacity-0 scale-95"
             >
               <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900"
+                >
                   Reserve a Table
                 </Dialog.Title>
 
-                <form onSubmit={handleReservationSubmit} className="mt-4 space-y-4">
+                <form
+                  onSubmit={handleReservationSubmit}
+                  className="mt-4 space-y-4"
+                >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Date</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Date
+                    </label>
                     <div className="mt-1 relative">
                       <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <input
                         type="date"
                         value={reservationData.date}
-                        onChange={(e) => setReservationData({ ...reservationData, date: e.target.value })}
+                        onChange={(e) =>
+                          setReservationData({
+                            ...reservationData,
+                            date: e.target.value,
+                          })
+                        }
                         className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
-                        min={format(new Date(), 'yyyy-MM-dd')}
+                        min={format(new Date(), "yyyy-MM-dd")}
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Time</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Time
+                    </label>
                     <div className="mt-1 relative">
                       <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <select
                         value={reservationData.time}
-                        onChange={(e) => setReservationData({ ...reservationData, time: e.target.value })}
+                        onChange={(e) =>
+                          setReservationData({
+                            ...reservationData,
+                            time: e.target.value,
+                          })
+                        }
                         className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
                         required
                       >
-                        {Array.from({ length: 14 }, (_, i) => i + 11).map((hour) => (
-                          <option key={hour} value={`${hour}:00`}>
-                            {hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`}
-                          </option>
-                        ))}
+                        {Array.from({ length: 14 }, (_, i) => i + 11).map(
+                          (hour) => (
+                            <option key={hour} value={`${hour}:00`}>
+                              {hour > 12
+                                ? `${hour - 12}:00 PM`
+                                : `${hour}:00 AM`}
+                            </option>
+                          )
+                        )}
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Number of Guests</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Number of Guests
+                    </label>
                     <div className="mt-1 relative">
                       <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <select
                         value={reservationData.guests}
-                        onChange={(e) => setReservationData({ ...reservationData, guests: Number(e.target.value) })}
+                        onChange={(e) =>
+                          setReservationData({
+                            ...reservationData,
+                            guests: Number(e.target.value),
+                          })
+                        }
                         className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
                         required
                       >
-                        {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                          <option key={num} value={num}>
-                            {num} {num === 1 ? 'Guest' : 'Guests'}
-                          </option>
-                        ))}
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                          (num) => (
+                            <option key={num} value={num}>
+                              {num} {num === 1 ? "Guest" : "Guests"}
+                            </option>
+                          )
+                        )}
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Special Requests</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Special Requests
+                    </label>
                     <textarea
                       value={reservationData.specialRequests}
-                      onChange={(e) => setReservationData({ ...reservationData, specialRequests: e.target.value })}
+                      onChange={(e) =>
+                        setReservationData({
+                          ...reservationData,
+                          specialRequests: e.target.value,
+                        })
+                      }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200"
                       rows={3}
                       placeholder="Any special requests or dietary requirements?"
