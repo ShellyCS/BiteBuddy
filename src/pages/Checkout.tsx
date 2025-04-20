@@ -106,16 +106,16 @@ export default function Checkout() {
 
     try {
       const orderItems = cart.map((item) => ({
-        id: item.id,
+        id: item.restaurantId,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
       }));
 
       await ordersApi.create({
-        restaurantId: cart.restaurantId,
+        restaurantId: cart[0].restaurantId,
         items: orderItems,
-        total: cart.total,
+        total: (total + 12 + total * 0.05)?.toFixed(2),
       });
 
       toast.success("Order placed successfully!");
@@ -277,7 +277,7 @@ export default function Checkout() {
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
-                  <span>₹12.00</span>
+                  <span>$12.00</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>

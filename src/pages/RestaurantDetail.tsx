@@ -24,7 +24,7 @@ export default function RestaurantDetail() {
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isSponsored, setIsSponsored] = useState(true); // 🔹 Hardcoded flag
+  const [isSponsored, setIsSponsored] = useState(true);
   const [reservationData, setReservationData] = useState({
     date: format(new Date(), "yyyy-MM-dd"),
     time: "19:00",
@@ -45,7 +45,6 @@ export default function RestaurantDetail() {
         setLoading(false);
       }
     };
-
     fetchRestaurantDetails();
   }, [id]);
 
@@ -106,6 +105,7 @@ export default function RestaurantDetail() {
       name: item.name,
       price: parseInt(item.price),
       quantity: 1,
+      restaurantId: item.restaurant_id,
     };
     // dispatch an action
     dispatch(addItem(itemToBePassed));

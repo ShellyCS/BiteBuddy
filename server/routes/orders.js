@@ -1,11 +1,11 @@
-import express from 'express';
-import pool from '../config/db.js';
-import { verifyToken } from '../middleware/auth.js';
+import express from "express";
+import pool from "../config/db.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Create new order
-router.post('/', verifyToken, async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const { restaurantId, items, total } = req.body;
@@ -22,15 +22,17 @@ router.post('/', verifyToken, async (req, res) => {
     res.status(201).json({ orderId: orderResult.insertId });
   } catch (error) {
     await connection.rollback();
-    console.error('Error creating order:', error);
-    res.status(500).json({ message: 'Error creating order', error: error.message });
+    console.error("Error creating order:", error);
+    res
+      .status(500)
+      .json({ message: "Error creating order", error: error.message });
   } finally {
     connection.release();
   }
 });
 
 // Get user's orders
-router.get('/user', verifyToken, async (req, res) => {
+router.get("/user", verifyToken, async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const [orders] = await connection.execute(
@@ -50,15 +52,17 @@ router.get('/user', verifyToken, async (req, res) => {
 
     res.json(orders);
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    res.status(500).json({ message: 'Error fetching orders', error: error.message });
+    console.error("Error fetching orders:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching orders", error: error.message });
   } finally {
     connection.release();
   }
 });
 
 // Get restaurant's orders
-router.get('/restaurant/:id', verifyToken, async (req, res) => {
+router.get("/restaurant/:id", verifyToken, async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const [orders] = await connection.execute(
@@ -71,39 +75,43 @@ router.get('/restaurant/:id', verifyToken, async (req, res) => {
     );
 
     // Parse items JSON string for each order
-    const formattedOrders = orders.map(order => ({
+    const formattedOrders = orders.map((order) => ({
       ...order,
-      items: JSON.parse(order.items)
+      items: JSON.parse(order.items),
     }));
 
     res.json(orders);
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    res.status(500).json({ message: 'Error fetching orders', error: error.message });
+    console.error("Error fetching orders:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching orders", error: error.message });
   } finally {
     connection.release();
   }
 });
 
 // Update order status
-router.put('/:id/status', verifyToken, async (req, res) => {
+router.put("/:id/status", verifyToken, async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const { status } = req.body;
-    
+
     await connection.beginTransaction();
 
-    await connection.execute(
-      'UPDATE orders SET status = ? WHERE id = ?',
-      [status, req.params.id]
-    );
+    await connection.execute("UPDATE orders SET status = ? WHERE id = ?", [
+      status,
+      req.params.id,
+    ]);
 
     await connection.commit();
-    res.json({ message: 'Order status updated successfully' });
+    res.json({ message: "Order status updated successfully" });
   } catch (error) {
     await connection.rollback();
-    console.error('Error updating order status:', error);
-    res.status(500).json({ message: 'Error updating order status', error: error.message });
+    console.error("Error updating order status:", error);
+    res
+      .status(500)
+      .json({ message: "Error updating order status", error: error.message });
   } finally {
     connection.release();
   }

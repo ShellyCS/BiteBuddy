@@ -5,14 +5,17 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  restaurantId: number;
 }
 
 interface CartState {
   items: CartItem[];
+  restaurantId: number | null;
 }
 
 const initialState: CartState = {
   items: [],
+  restaurantId: null,
 };
 
 const cartSlice = createSlice({
