@@ -18,6 +18,10 @@ export default function Navbar() {
       : "text-gray-700 hover:text-yellow-500";
   };
 
+  const toTitleCase = (str: string) =>
+    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+  
+
   return (
     <nav className="bg-yellow-50 shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
@@ -58,7 +62,7 @@ export default function Navbar() {
                   )}`}
                 >
                   <User className="h-5 w-5 mr-1" />
-                  <span>{user.fullName}</span>
+                  <span>{user.fullName ? toTitleCase(user.fullName) : user.email}</span>
                   </Link>
                 <button
                   onClick={handleLogout}
