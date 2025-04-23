@@ -15,10 +15,11 @@ router.post("/register", async (req, res) => {
       password,
       confirmPassword,
       role,
+      fullName,
       restaurantName,
       restaurantAddress,
       restaurantPhone,
-    } = req.body;
+    } = req.body;    
 
     // Validate required fields
     if (!email || !password || !role) {
@@ -56,9 +57,10 @@ router.post("/register", async (req, res) => {
 
     // Insert user
     const [userResult] = await connection.execute(
-      "INSERT INTO users (email, password, type) VALUES (?, ?, ?)",
-      [email, hashedPassword, role]
+      "INSERT INTO users (email, password, type, fullName) VALUES (?, ?, ?, ?)",
+      [email, hashedPassword, role, fullName]
     );
+    
 
     let restaurantId = null;
 
@@ -120,8 +122,10 @@ router.post("/register", async (req, res) => {
         email,
         role,
         restaurantId,
+        fullName, // Include here
       },
     });
+    
   } catch (error) {
     await connection.rollback();
     console.error("Registration error:", error);
@@ -175,8 +179,10 @@ router.post("/login", async (req, res) => {
         email: user.email,
         role: user.type,
         restaurantId: user.restaurant_id,
+        fullName: user.fullName,
       },
     });
+    
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Error logging in", error: error.message });

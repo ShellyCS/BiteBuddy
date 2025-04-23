@@ -58,8 +58,8 @@ export default function Navbar() {
                   )}`}
                 >
                   <User className="h-5 w-5 mr-1" />
-                  <span>{user.email}</span>
-                </Link>
+                  <span>{user.fullName}</span>
+                  </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center text-gray-700 hover:text-yellow-500"
