@@ -122,7 +122,7 @@ router.post("/register", async (req, res) => {
         email,
         role,
         restaurantId,
-        fullName, // Include here
+        fullName,
       },
     });
     
