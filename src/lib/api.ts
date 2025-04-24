@@ -54,11 +54,16 @@ export const restaurants = {
 // Orders API
 export const orders = {
   create: (data: any) => api.post("/orders", data),
+  getById: (id: string) => api.get(`/orders/${id}`),
   getUserOrders: () => api.get("/orders/user"),
   getRestaurantOrders: (restaurantId: string) =>
     api.get(`/orders/restaurant/${restaurantId}`),
   updateStatus: (orderId: string, status: string) =>
     api.put(`/orders/${orderId}/status`, { status }),
+  // Stripe payment integration endpoints
+  createPayment: (orderId: string) => api.post(`/orders/${orderId}/payment`),
+  updatePaymentStatus: (orderId: string, status: string) =>
+    api.put(`/orders/${orderId}/payment-status`, { status }),
 };
 
 // Reservations API
@@ -73,8 +78,15 @@ export const reservations = {
 
 // Campaigns API
 export const campaigns = {
+  getAll: () => api.get("/campaigns"),
+  getById: (id: string) => api.get(`/campaigns/${id}`),
   getByRestaurantId: (restaurantId: string) =>
     api.get(`/campaigns/restaurant/${restaurantId}`),
+  create: (data: any) => api.post("/campaigns", data),
+  update: (id: string, data: any) => api.put(`/campaigns/${id}`, data),
+  delete: (id: string) => api.delete(`/campaigns/${id}`),
+  getActiveForRestaurant: (restaurantId: string) => 
+    api.get(`/campaigns/restaurant/${restaurantId}/active`),
 };
 
 export default api;
