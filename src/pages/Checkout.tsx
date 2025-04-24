@@ -1,5 +1,5 @@
 // src/pages/Checkout.tsx
-import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2, CreditCard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,6 +13,12 @@ import {
   removeItem,
   selectCartTotal,
 } from "../utils/cartSlice";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import PaymentForm from "../components/PaymentForm";
+
+// Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 interface SuggestedItem {
   id: number;
@@ -24,19 +30,30 @@ interface SuggestedItem {
 }
 
 export default function Checkout() {
-  // const { cart, removeItem, updateQuantity, clearCart, addItem } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [suggestedItems, setSuggestedItems] = useState<SuggestedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [restaurantInfo, setRestaurantInfo] = useState<any>(null);
   const dispatch = useDispatch();
+  
+  // Stripe payment states
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
+  const [orderId, setOrderId] = useState<number | null>(null);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const cart = useSelector((state) => state.cart.items);
   const total = useSelector(selectCartTotal);
 
+  // Calculate final total with delivery fee and tax
+  const deliveryFee = 12;
+  const taxRate = 0.05;
+  const taxAmount = total * taxRate;
+  const finalTotal = total + deliveryFee + taxAmount;
+
   useEffect(() => {
-    if (!cart.restaurantId) {
+    if (cart.length === 0) {
       setLoading(false);
       return;
     }
@@ -44,8 +61,14 @@ export default function Checkout() {
     const fetchData = async () => {
       try {
         // Fetch restaurant details
+        const restaurantId = cart[0]?.restaurantId;
+        if (!restaurantId) {
+          setLoading(false);
+          return;
+        }
+
         const restaurantResponse = await restaurantsApi.getById(
-          cart.restaurantId.toString()
+          restaurantId.toString()
         );
         setRestaurantInfo(restaurantResponse.data);
 
@@ -70,7 +93,7 @@ export default function Checkout() {
         setSuggestedItems(
           suggested.map((item) => ({
             ...item,
-            restaurantId: cart.restaurantId,
+            restaurantId,
           }))
         );
       } catch (error) {
@@ -82,7 +105,7 @@ export default function Checkout() {
     };
 
     fetchData();
-  }, [cart.restaurantId, cart.items]);
+  }, [cart]);
 
   const handleAddQty = (item) => {
     // dispatch an action
@@ -97,7 +120,7 @@ export default function Checkout() {
     dispatch(removeEntireItem(id));
   };
 
-  const handlePlaceOrder = async () => {
+  const initiatePayment = async () => {
     if (!user) {
       toast.error("Please login to place an order");
       navigate("/login");
@@ -105,26 +128,51 @@ export default function Checkout() {
     }
 
     try {
+      setProcessingPayment(true);
+      
+      // Format order items
       const orderItems = cart.map((item) => ({
-        id: item.restaurantId,
+        id: item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
       }));
 
-      await ordersApi.create({
+      // Create order first
+      const orderResponse = await ordersApi.create({
         restaurantId: cart[0].restaurantId,
-        items: orderItems,
-        total: (total + 12 + total * 0.05)?.toFixed(2),
+        items: JSON.stringify(orderItems),
+        total: finalTotal.toFixed(2),
       });
 
-      toast.success("Order placed successfully!");
-      dispatch(clearCart());
-      navigate("/profile");
+      const newOrderId = orderResponse.data.orderId;
+      setOrderId(newOrderId);
+      
+      // Create payment intent for the order
+      const paymentResponse = await ordersApi.createPayment(newOrderId);
+      setClientSecret(paymentResponse.data.clientSecret);
+      
+      // Show payment form
+      setShowPaymentForm(true);
+      setProcessingPayment(false);
     } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error("Failed to place order. Please try again.");
+      console.error("Error initiating payment:", error);
+      setProcessingPayment(false);
+      toast.error("Failed to initiate payment. Please try again.");
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    toast.success("Payment successful! Your order has been placed.");
+    dispatch(clearCart());
+    navigate("/profile");
+  };
+
+  const appearance = {
+    theme: 'stripe',
+    variables: {
+      colorPrimary: '#eab308',
+    },
   };
 
   return (
@@ -225,8 +273,26 @@ export default function Checkout() {
               </div>
             </div>
 
+            {/* Stripe Payment Form */}
+            {showPaymentForm && clientSecret && (
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 className="text-xl font-bold mb-6 flex items-center">
+                  <CreditCard className="h-5 w-5 mr-2" />
+                  Payment Details
+                </h2>
+                <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+                  <PaymentForm 
+                    clientSecret={clientSecret}
+                    orderId={orderId}
+                    amount={finalTotal}
+                    onSuccess={handlePaymentSuccess}
+                  />
+                </Elements>
+              </div>
+            )}
+
             {/* Suggested Items */}
-            {suggestedItems.length > 0 && (
+            {suggestedItems.length > 0 && !showPaymentForm && (
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold mb-6">You Might Also Like</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -244,15 +310,13 @@ export default function Checkout() {
                       </div>
                       <button
                         onClick={() => {
-                          // addItem(
-                          //   {
-                          //     id: item.id,
-                          //     restaurantId: item.restaurantId,
-                          //     name: item.name,
-                          //     price: item.price,
-                          //   },
-                          //   1
-                          // );
+                          handleAddQty({
+                            id: item.id,
+                            restaurantId: item.restaurantId,
+                            name: item.name,
+                            price: item.price,
+                            quantity: 1
+                          });
                           toast.success(`${item.name} added to cart`);
                         }}
                         className="p-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors"
@@ -277,22 +341,40 @@ export default function Checkout() {
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
-                  <span>$12.00</span>
+                  <span>${deliveryFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>${(total * 0.05)?.toFixed(2)}</span>
+                  <span>${taxAmount.toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-4 flex justify-between font-bold">
                   <span>Total</span>
-                  <span>${(total + 12 + total * 0.05)?.toFixed(2)}</span>
+                  <span>${finalTotal.toFixed(2)}</span>
                 </div>
-                <button
-                  onClick={handlePlaceOrder}
-                  className="w-full bg-yellow-500 text-white py-3 px-4 rounded-md hover:bg-yellow-600 transition-colors"
-                >
-                  Place Order
-                </button>
+                
+                {showPaymentForm ? (
+                  <div className="text-center text-sm text-gray-500">
+                    Please complete the payment form
+                  </div>
+                ) : (
+                  <button
+                    onClick={initiatePayment}
+                    disabled={processingPayment}
+                    className="w-full bg-yellow-500 text-white py-3 px-4 rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center"
+                  >
+                    {processingPayment ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="h-5 w-5 mr-2" />
+                        Proceed to Payment
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>

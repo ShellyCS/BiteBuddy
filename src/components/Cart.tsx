@@ -4,8 +4,6 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-// import { useCart } from "../contexts/CartContext";
-import { orders as ordersApi } from "../lib/api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addItem,
@@ -16,22 +14,22 @@ import {
 
 export default function Cart() {
   const [isOpen, setIsOpen] = useState(false);
-  // const { cart, removeItem, updateQuantity, clearCart } = useCart();
-  const cart = useSelector((store) => store.cart.items);
-  console.log("cart", cart);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Redux cart state
+  const cartItems = useSelector((store) => store.cart.items);
+  const total = useSelector(selectCartTotal);
+  
+  // Calculate total quantity across all items
+  const itemQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const toggleCart = () => {
     setIsOpen(!isOpen);
   };
 
-  const cartItems = useSelector((store) => store.cart.items);
-  const itemQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const dispatch = useDispatch();
-
   const handleAddQty = (item) => {
-    // dispatch an action
     dispatch(addItem(item));
   };
 
@@ -43,42 +41,21 @@ export default function Cart() {
     dispatch(removeEntireItem(id));
   };
 
-  const total = useSelector(selectCartTotal);
-
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!user) {
       toast.error("Please login to checkout");
       navigate("/login");
       return;
     }
-
-    try {
-      const orderItems = cart.items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-      }));
-
-      const response = await ordersApi.create({
-        restaurantId: cart.restaurantId,
-        items: JSON.stringify(orderItems),
-        total: cart.total,
-      });
-
-      toast.success("Order placed successfully!");
-      setIsOpen(false);
-
-      // Optionally redirect to orders page
-      navigate("/profile");
-    } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error("Failed to place order. Please try again.");
-    }
+    
+    // Close cart and navigate to checkout page
+    setIsOpen(false);
+    navigate("/checkout");
   };
 
   return (
     <>
+      {/* Cart Button */}
       <button
         onClick={toggleCart}
         className="fixed bottom-4 right-4 bg-yellow-500 text-white p-3 rounded-full shadow-lg hover:bg-yellow-600 transition-colors z-50"
@@ -91,12 +68,14 @@ export default function Cart() {
         )}
       </button>
 
+      {/* Cart Sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
+          {/* Header */}
           <div className="flex justify-between items-center p-4 border-b">
             <h2 className="text-xl font-bold">Your Cart</h2>
             <button
@@ -107,14 +86,15 @@ export default function Cart() {
             </button>
           </div>
 
+          {/* Cart Items */}
           <div className="flex-grow overflow-y-auto p-4">
-            {!cart?.length ? (
+            {!cartItems.length ? (
               <p className="text-center text-gray-500 my-8">
                 Your cart is empty
               </p>
             ) : (
               <div className="space-y-4">
-                {cart.map((item) => (
+                {cartItems.map((item) => (
                   <div
                     key={item.id}
                     className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
@@ -161,11 +141,8 @@ export default function Cart() {
               </span>
             </div>
             <button
-              onClick={() => {
-                setIsOpen(false);
-                navigate("/checkout");
-              }}
-              disabled={!cart.length}
+              onClick={handleCheckout}
+              disabled={!cartItems.length}
               className="w-full bg-yellow-500 text-white py-3 px-4 rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-2"
             >
               Proceed to Checkout

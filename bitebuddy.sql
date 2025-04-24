@@ -253,3 +253,11 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-04-16  3:22:54
+
+
+
+
+-- Add payment columns to orders table
+ALTER TABLE orders
+ADD COLUMN payment_intent_id VARCHAR(255) NULL,
+ADD COLUMN payment_status ENUM('pending', 'completed', 'failed') DEFAULT NULL;
