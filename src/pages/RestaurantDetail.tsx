@@ -16,6 +16,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { reservations, restaurants as restaurantsApi } from "../lib/api";
 import { useDispatch } from "react-redux";
 import { addItem } from "../utils/cartSlice";
+import RatingForm from "../components/RatingForm";
 
 export default function RestaurantDetail() {
   const { id } = useParams();
@@ -417,6 +418,12 @@ export default function RestaurantDetail() {
           </div>
         </Dialog>
       </Transition>
+      {user?.role === "diner" && (
+        <div className="bg-white rounded-lg shadow-md p-6 mt-8">
+          <h2 className="text-2xl font-bold mb-4">Rate Your Experience</h2>
+          <RatingForm restaurantId={restaurant.id} />
+        </div>
+      )}
     </div>
   );
 }

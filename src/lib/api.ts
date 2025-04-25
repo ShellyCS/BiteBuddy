@@ -85,8 +85,13 @@ export const campaigns = {
   create: (data: any) => api.post("/campaigns", data),
   update: (id: string, data: any) => api.put(`/campaigns/${id}`, data),
   delete: (id: string) => api.delete(`/campaigns/${id}`),
-  getActiveForRestaurant: (restaurantId: string) => 
+  getActiveForRestaurant: (restaurantId: string) =>
     api.get(`/campaigns/restaurant/${restaurantId}/active`),
+};
+
+// Ratings API
+export const ratings = {
+  create: (data: any) => api.post("/ratings", data),
 };
 
 export default api;

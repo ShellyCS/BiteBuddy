@@ -40,13 +40,13 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       fetchUserData();
-      
+
       // Check for payment success in URL
       const queryParams = new URLSearchParams(location.search);
-      const paymentSuccess = queryParams.get('payment_success');
-      const orderId = queryParams.get('order_id');
-      
-      if (paymentSuccess === 'true' && orderId) {
+      const paymentSuccess = queryParams.get("payment_success");
+      const orderId = queryParams.get("order_id");
+
+      if (paymentSuccess === "true" && orderId) {
         toast.success("Payment successful! Your order has been placed.");
       }
     }
@@ -145,7 +145,7 @@ export default function Profile() {
                     >
                       {order.status}
                     </span>
-                    
+
                     {/* Payment Status Badge */}
                     {order.payment_status && (
                       <span
@@ -158,8 +158,8 @@ export default function Profile() {
                         }`}
                       >
                         <CreditCard className="h-3 w-3 mr-1" />
-                        {order.payment_status === "completed" 
-                          ? "Paid" 
+                        {order.payment_status === "completed"
+                          ? "Paid"
                           : order.payment_status === "failed"
                           ? "Payment Failed"
                           : "Payment Pending"}
@@ -178,7 +178,10 @@ export default function Profile() {
                         // Handle both array of items and single item
                         if (Array.isArray(parsedItems)) {
                           return parsedItems.map((item, idx) => (
-                            <div key={idx} className="flex justify-between py-1">
+                            <div
+                              key={idx}
+                              className="flex justify-between py-1"
+                            >
                               <div className="flex items-center">
                                 <span className="font-medium">{item.name}</span>
                                 <span className="text-gray-500 ml-2">
@@ -210,13 +213,18 @@ export default function Profile() {
                       } catch (e) {
                         // If parsing fails, display it in a cleaner format
                         return (
-                          <div className="py-1">
-                            {typeof order.items === "string"
-                              ? order.items
-                                  .replace(/[{}"\\]/g, "")
-                                  .replace(/,/g, ", ")
-                                  .replace(/:/g, ": ")
-                              : "Item information not available"}
+                          <div className="flex justify-between py-1">
+                            <div className="flex items-center">
+                              <span className="font-medium">
+                                {parsedItems.name}
+                              </span>
+                              <span className="text-gray-500 ml-2">
+                                x{parsedItems.quantity || 1}
+                              </span>
+                            </div>
+                            <span>
+                              ${parseFloat(parsedItems.price).toFixed(2)}
+                            </span>
                           </div>
                         );
                       }
@@ -245,18 +253,22 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Retry Payment Button for Failed Payments */}
                 {order.payment_status === "failed" && (
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <button 
+                    <button
                       onClick={async () => {
                         try {
-                          const response = await ordersApi.createPayment(order.id.toString());
+                          const response = await ordersApi.createPayment(
+                            order.id.toString()
+                          );
                           // Redirect to a new checkout page with this order's payment intent
                           window.location.href = `/checkout?order_id=${order.id}&client_secret=${response.data.clientSecret}`;
                         } catch (error) {
-                          toast.error("Failed to initialize payment. Please try again.");
+                          toast.error(
+                            "Failed to initialize payment. Please try again."
+                          );
                         }
                       }}
                       className="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 transition-colors w-full"
@@ -280,7 +292,9 @@ export default function Profile() {
       <div className="grid gap-4">
         {reservations.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <p className="text-gray-500">You don't have any reservations yet.</p>
+            <p className="text-gray-500">
+              You don't have any reservations yet.
+            </p>
           </div>
         ) : (
           reservations.map((reservation) => (

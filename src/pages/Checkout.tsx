@@ -306,7 +306,7 @@ export default function Checkout() {
                         <p className="text-sm text-gray-600">
                           {item.description}
                         </p>
-                        <p className="text-yellow-500">₹{item.price}</p>
+                        <p className="text-yellow-500">${item.price}</p>
                       </div>
                       <button
                         onClick={() => {
