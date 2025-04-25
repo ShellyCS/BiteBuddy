@@ -97,7 +97,7 @@ export const ratings = {
 // Supprt API
 export const support = {
   create: (data: any) => api.post("/support", data),
-  getUserTickets: () => api.get("/support/user"),
+  getRestaurantTickets: () => api.get("/support/restaurant"),
 };
 
 export default api;

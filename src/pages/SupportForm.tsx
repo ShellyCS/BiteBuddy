@@ -1,18 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { support } from "../lib/api";
+import { restaurants, support } from "../lib/api"; // Import restaurants API too
 
 export default function SupportForm() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [restaurantId, setRestaurantId] = useState("");
+  const [restaurantList, setRestaurantList] = useState([]);
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const fetchRestaurants = async () => {
+    try {
+      const res = await restaurants.getAll();
+      setRestaurantList(res.data);
+    } catch (error) {
+      toast.error("Failed to load restaurants");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!restaurantId) {
+      toast.error("Please select a restaurant");
+      return;
+    }
     try {
-      await support.create({ subject, message });
+      await support.create({ subject, message, restaurantId });
       toast.success("Support ticket submitted!");
       setSubject("");
       setMessage("");
+      setRestaurantId("");
     } catch {
       toast.error("Failed to submit ticket.");
     }
@@ -21,6 +41,21 @@ export default function SupportForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto">
       <h2 className="text-2xl font-bold">Submit Support Ticket</h2>
+
+      <select
+        value={restaurantId}
+        onChange={(e) => setRestaurantId(e.target.value)}
+        className="w-full border p-2 rounded"
+        required
+      >
+        <option value="">Select Restaurant</option>
+        {restaurantList.map((rest) => (
+          <option key={rest.id} value={rest.id}>
+            {rest.name}
+          </option>
+        ))}
+      </select>
+
       <input
         type="text"
         placeholder="Subject"

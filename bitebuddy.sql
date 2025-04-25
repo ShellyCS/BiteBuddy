@@ -279,6 +279,20 @@ CREATE TABLE support_tickets (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+ALTER TABLE support_tickets
+ADD COLUMN restaurant_id INT;
+
+UPDATE support_tickets
+SET restaurant_id = 748108
+WHERE id > 0;
+
+ALTER TABLE support_tickets
+MODIFY restaurant_id INT NOT NULL;
+
+ALTER TABLE support_tickets
+ADD CONSTRAINT fk_supportticket_restaurant
+FOREIGN KEY (restaurant_id) REFERENCES restaurant(id) ON DELETE CASCADE;
+
 
 
 -- Dump completed on 2025-04-16  3:22:54

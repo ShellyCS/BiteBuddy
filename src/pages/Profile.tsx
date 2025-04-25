@@ -58,7 +58,6 @@ export default function Profile() {
         ordersApi.getUserOrders(),
         reservationsApi.getUserReservations(),
       ]);
-
       setOrders(ordersRes.data);
       setReservations(reservationsRes.data);
     } catch (error) {
@@ -172,8 +171,7 @@ export default function Profile() {
                   <div className="space-y-2">
                     {(() => {
                       try {
-                        // Try to parse the JSON string
-                        const parsedItems = JSON.parse(order.items as any);
+                        const parsedItems = order.items;
 
                         // Handle both array of items and single item
                         if (Array.isArray(parsedItems)) {

@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Create new order
 router.post("/", verifyToken, async (req, res) => {
+  console.log("Get Orders endpoint hit");
   const connection = await pool.getConnection();
   try {
     const { restaurantId, items, total } = req.body;
@@ -34,10 +35,11 @@ router.post("/", verifyToken, async (req, res) => {
 
 // Create payment intent for an order
 router.post("/:id/payment", verifyToken, async (req, res) => {
+  console.log("Order payment endpoint hit");
   const connection = await pool.getConnection();
   try {
     const orderId = req.params.id;
-    
+
     // Get order details
     const [orders] = await connection.execute(
       `SELECT * FROM orders WHERE id = ? AND user_id = ?`,
@@ -45,11 +47,11 @@ router.post("/:id/payment", verifyToken, async (req, res) => {
     );
 
     if (orders.length === 0) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: "Order not found" });
     }
-    
+
     const order = orders[0];
-    
+
     // Create a payment intent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(order.total * 100), // Convert to cents
@@ -62,7 +64,7 @@ router.post("/:id/payment", verifyToken, async (req, res) => {
 
     // Update order with payment intent ID
     await connection.execute(
-      'UPDATE orders SET payment_intent_id = ? WHERE id = ?',
+      "UPDATE orders SET payment_intent_id = ? WHERE id = ?",
       [paymentIntent.id, orderId]
     );
 
@@ -71,9 +73,9 @@ router.post("/:id/payment", verifyToken, async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating payment intent:", error);
-    res.status(500).json({ 
-      message: "Error creating payment intent", 
-      error: error.message 
+    res.status(500).json({
+      message: "Error creating payment intent",
+      error: error.message,
     });
   } finally {
     connection.release();
@@ -82,14 +84,15 @@ router.post("/:id/payment", verifyToken, async (req, res) => {
 
 // Update payment status
 router.put("/:id/payment-status", verifyToken, async (req, res) => {
+  console.log("payment status endpoint hit");
   const connection = await pool.getConnection();
   try {
     const { status } = req.body;
-    
+
     await connection.beginTransaction();
 
     await connection.execute(
-      "UPDATE orders SET payment_status = ? WHERE id = ?", 
+      "UPDATE orders SET payment_status = ? WHERE id = ?",
       [status, req.params.id]
     );
 
@@ -98,9 +101,9 @@ router.put("/:id/payment-status", verifyToken, async (req, res) => {
   } catch (error) {
     await connection.rollback();
     console.error("Error updating payment status:", error);
-    res.status(500).json({ 
-      message: "Error updating payment status", 
-      error: error.message 
+    res.status(500).json({
+      message: "Error updating payment status",
+      error: error.message,
     });
   } finally {
     connection.release();
@@ -109,6 +112,7 @@ router.put("/:id/payment-status", verifyToken, async (req, res) => {
 
 // Get user's orders
 router.get("/user", verifyToken, async (req, res) => {
+  console.log("get user order endpoint hit");
   const connection = await pool.getConnection();
   try {
     const [orders] = await connection.execute(
@@ -121,9 +125,9 @@ router.get("/user", verifyToken, async (req, res) => {
     );
 
     // Parse items JSON string for each order
-    const formattedOrders = orders.map(order => ({
+    const formattedOrders = orders.map((order) => ({
       ...order,
-      items: JSON.parse(order.items)
+      items: JSON.parse(order.items),
     }));
 
     res.json(formattedOrders);
@@ -139,6 +143,7 @@ router.get("/user", verifyToken, async (req, res) => {
 
 // Get restaurant's orders
 router.get("/restaurant/:id", verifyToken, async (req, res) => {
+  console.log("rest id endpoint hit");
   const connection = await pool.getConnection();
   try {
     const [orders] = await connection.execute(
@@ -169,6 +174,7 @@ router.get("/restaurant/:id", verifyToken, async (req, res) => {
 
 // Update order status
 router.put("/:id/status", verifyToken, async (req, res) => {
+  console.log("id status endpoint hit");
   const connection = await pool.getConnection();
   try {
     const { status } = req.body;
@@ -194,7 +200,7 @@ router.put("/:id/status", verifyToken, async (req, res) => {
 });
 
 // Get order by ID
-router.get('/:id', verifyToken, async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const [orders] = await connection.execute(
@@ -206,19 +212,21 @@ router.get('/:id', verifyToken, async (req, res) => {
     );
 
     if (orders.length === 0) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: "Order not found" });
     }
 
     // Parse items JSON string
     const order = {
       ...orders[0],
-      items: JSON.parse(orders[0].items)
+      items: JSON.parse(orders[0].items),
     };
 
     res.json(order);
   } catch (error) {
-    console.error('Error fetching order:', error);
-    res.status(500).json({ message: 'Error fetching order', error: error.message });
+    console.error("Error fetching order:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching order", error: error.message });
   } finally {
     connection.release();
   }
