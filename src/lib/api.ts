@@ -94,4 +94,10 @@ export const ratings = {
   create: (data: any) => api.post("/ratings", data),
 };
 
+// Supprt API
+export const support = {
+  create: (data: any) => api.post("/support", data),
+  getUserTickets: () => api.get("/support/user"),
+};
+
 export default api;

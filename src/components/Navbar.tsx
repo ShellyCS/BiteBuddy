@@ -1,4 +1,11 @@
-import { Home, LogOut, MessageCircle, User, Utensils } from "lucide-react";
+import {
+  Home,
+  LogOut,
+  MessageCircle,
+  Ticket,
+  User,
+  Utensils,
+} from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -19,8 +26,10 @@ export default function Navbar() {
   };
 
   const toTitleCase = (str: string) =>
-    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
-  
+    str.replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase()
+    );
 
   return (
     <nav className="bg-yellow-50 shadow-lg sticky top-0 z-50">
@@ -50,6 +59,17 @@ export default function Navbar() {
                 <span>Contact Us</span>
               </Link>
             </div>
+            {user?.role === "diner" && (
+              <div className="hidden md:flex items-center space-x-4">
+                <Link
+                  to="/support"
+                  className={`flex items-center ${isActive("/support")}`}
+                >
+                  <Ticket className="h-5 w-5 mr-1" />
+                  <span>Support</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center space-x-4">
@@ -62,8 +82,10 @@ export default function Navbar() {
                   )}`}
                 >
                   <User className="h-5 w-5 mr-1" />
-                  <span>{user.fullName ? toTitleCase(user.fullName) : user.email}</span>
-                  </Link>
+                  <span>
+                    {user.fullName ? toTitleCase(user.fullName) : user.email}
+                  </span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center text-gray-700 hover:text-yellow-500"

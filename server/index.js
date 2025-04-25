@@ -10,6 +10,7 @@ import orderRoutes from "./routes/orders.js";
 import reservationRoutes from "./routes/reservations.js";
 import restaurantRoutes from "./routes/restaurants.js";
 import ratingRoutes from "./routes/ratings.js";
+import supportRoutes from "./routes/support.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api/orders", verifyToken, orderRoutes);
 app.use("/api/reservations", verifyToken, reservationRoutes);
 app.use("/api/campaigns", verifyToken, adCampaignRoutes);
 app.use("/api/ratings", verifyToken, ratingRoutes);
+app.use("/api/support", verifyToken, supportRoutes);
 
 // WebSocket connection handling
 io.on("connection", (socket) => {

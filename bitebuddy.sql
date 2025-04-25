@@ -268,6 +268,19 @@ CREATE TABLE `ratings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+CREATE TABLE support_tickets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  subject VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  status ENUM('open', 'in_progress', 'resolved') DEFAULT 'open',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+
 -- Dump completed on 2025-04-16  3:22:54
 
 

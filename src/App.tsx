@@ -25,6 +25,7 @@ import Register from "./pages/Register";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import appStore from "./utils/appStore";
+import SupportForm from "./pages/SupportForm";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -96,6 +97,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={["diner"]}>
             <Checkout />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/support"
+        element={
+          <ProtectedRoute allowedRoles={["diner"]}>
+            <SupportForm />
           </ProtectedRoute>
         }
       />
